@@ -36,18 +36,40 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
+			for movement > 100 {
+				fmt.Println("increment zerocount due to big boy movement: ", movement, zeroCount)
+				zeroCount++
+				movement -= 100
+			}
+			snapshot := start
 			start += movement
 			start = mod(start, 100)
 			fmt.Println("input: ", i, "pointer: ", start)
+			// crossed 0 condition
+			if snapshot != 0 && snapshot+movement > 100 && start != 0 {
+				fmt.Println("R snapshot condition hit: input: ", i, "pointer: ", start, "snapshot: ", snapshot, "snapshot + movement: ", snapshot+movement)
+				zeroCount++
+			}
 		case "L":
 			strings := strings.Split(string(i), "L")
 			movement, err := strconv.Atoi(strings[1])
 			if err != nil {
 				panic(err)
 			}
+			for movement > 100 {
+				fmt.Println("increment zerocount due to big boy movement: ", movement, zeroCount)
+				zeroCount++
+				movement -= 100
+			}
+			snapshot := start
 			start -= movement
 			start = mod(start, 100)
 			fmt.Println("input: ", i, "pointer: ", start)
+			// crossed 0 condition
+			if snapshot != 0 && snapshot-movement < 0 && start != 0 {
+				fmt.Println("L snapshot condition hit: input: ", i, "pointer: ", start, "snapshot: ", snapshot, "snapshot - movement: ", snapshot-movement)
+				zeroCount++
+			}
 		}
 
 		if start == 0 {
