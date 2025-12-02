@@ -23,23 +23,47 @@ func atoi(in string) int64 {
 	return v
 }
 
-func isRepeatedString(in int64) bool {
-	// heuristic for speed, condition is not fulfillable if not even length
+func hasRepeatedString(in int64) bool {
 	windowSize := len(strconv.FormatInt(in, 10))
-	if windowSize&1 == 0 {
-		// fmt.Println("even size: ", windowSize, "input: ", in)
-		s := strconv.FormatInt(in, 10)
-		// fmt.Println("1st half: ", s[0:windowSize/2], "second half: ", s[windowSize/2:])
-		return s[0:windowSize/2] == s[windowSize/2:]
+	stringInt := strconv.FormatInt(in, 10)
+	for i := 1; i < windowSize/2+1; i++ {
+		fmt.Println("checking substr: ", stringInt[0:i], "against: ", stringInt)
+		if numRepeats(stringInt[0:i], stringInt) >= 2 {
+			return true
+		}
 	}
 
 	return false
+}
+func numRepeats(substr, str string) int {
+	if substr == "" || str == "" {
+		return 0
+	}
+	// fmt.Println("substr: ", substr, "string: ", str)
+	if len(substr) > len(str) || (len(substr) == len(str) && substr != str) {
+		// should be intmax tbh, but let's do FF numbers
+		return -9999999
+	}
+	if substr == str {
+		return 1
+	}
+	before, after, found := strings.Cut(str, substr)
+	if before == "" && after == "" && found {
+		return 1
+	}
+	if before != "" {
+		return -9999999
+	}
+	if !found {
+		return 0
+	}
+	return 1 + numRepeats(substr, after)
 }
 
 func findRepeats(l, h int64) []int64 {
 	out := []int64{}
 	for i := l; i <= h; i++ {
-		if isRepeatedString(i) {
+		if hasRepeatedString(i) {
 			out = append(out, i)
 		}
 	}
@@ -55,10 +79,11 @@ func main() {
 	for _, input := range inputs {
 		s := strings.Split(input, "-")
 		lower, upper := atoi(s[0]), atoi(s[1])
+		fmt.Println("lower: ", lower, "upper: ", upper)
 		repeats := findRepeats(lower, upper)
-		// if len(repeats) > 0 {
-		// 	fmt.Println("input: ", input, "repeats", repeats)
-		// }
+		if len(repeats) > 0 {
+			fmt.Println("input: ", input, "repeats", repeats)
+		}
 		for _, r := range repeats {
 			sum += r
 		}
