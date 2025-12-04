@@ -92,21 +92,24 @@ func calculateNumberOfRollsForIndex(rolls [][]string, y, x int) int {
 func main() {
 	out := readInput()
 	// fmt.Println(out)
-	prettyp(out)
-	fmt.Println("")
-	countBelow4 := 0
-	weights := [][]int{}
-	for i := range out {
-		ap := []int{}
-		for j := range out[i] {
-			weight := calculateNumberOfRollsForIndex(out, i, j)
-			if weight < 4 {
-				countBelow4++
+	// prettyp(out)
+	// fmt.Println("")
+	numPops := 0
+	popCoords := [][]int{{1, 1}}
+	for len(popCoords) != 0 {
+		popCoords = [][]int{}
+		for i := range out {
+			for j := range out[i] {
+				weight := calculateNumberOfRollsForIndex(out, i, j)
+				if weight < 4 {
+					popCoords = append(popCoords, []int{i, j})
+					numPops++
+				}
 			}
-			ap = append(ap, weight)
+			for _, coord := range popCoords {
+				out[coord[0]][coord[1]] = "hi"
+			}
 		}
-		weights = append(weights, ap)
 	}
-
-	fmt.Println(countBelow4)
+	fmt.Println(numPops)
 }
