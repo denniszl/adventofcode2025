@@ -50,25 +50,14 @@ func betweenInterval(low, high, cmp int64) bool {
 }
 
 func main() {
-	intervals, ingredients := readInput()
-	freshCount := 0
-	// intervalMap := map[int64]bool{}
-	// for _, interval := range intervals {
-	// 	splitted := strings.Split(interval, "-")
-	// 	for i := atoi(splitted[0]); i <= atoi(splitted[1]); i++ {
-	// 		intervalMap[i] = true
-	// 	}
-	// }
-
-	for i := range ingredients {
-		for _, interval := range intervals {
-			splitted := strings.Split(interval, "-")
-			if betweenInterval(atoi(splitted[0]), atoi(splitted[1]), atoi(i)) {
-				freshCount++
-				break
-			}
+	intervals, _ := readInput()
+	intervalMap := map[int64]bool{}
+	for _, interval := range intervals {
+		splitted := strings.Split(interval, "-")
+		for i := atoi(splitted[0]); i <= atoi(splitted[1]); i++ {
+			intervalMap[i] = true
 		}
 	}
 
-	fmt.Println(freshCount)
+	fmt.Println(len(intervalMap))
 }
