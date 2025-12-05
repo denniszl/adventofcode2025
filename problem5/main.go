@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func readInput() ([]string, []string) {
+func readInput() ([]string, map[string]bool) {
 	dat, err := os.ReadFile("input.txt")
 	if err != nil {
 		panic(err)
@@ -30,7 +30,11 @@ func readInput() ([]string, []string) {
 			intervals = append(intervals, line)
 		}
 	}
-	return intervals, ingredients
+	ingredientMap := map[string]bool{}
+	for _, i := range ingredients {
+		ingredientMap[i] = true
+	}
+	return intervals, ingredientMap
 }
 
 func atoi(in string) int64 {
@@ -41,21 +45,28 @@ func atoi(in string) int64 {
 	return v
 }
 
+func betweenInterval(low, high, cmp int64) bool {
+	return low <= cmp && cmp <= high
+}
+
 func main() {
 	intervals, ingredients := readInput()
 	freshCount := 0
-	intervalMap := map[int64]bool{}
-	for _, interval := range intervals {
-		splitted := strings.Split(interval, "-")
-		for i := atoi(splitted[0]); i <= atoi(splitted[1]); i++ {
-			intervalMap[i] = true
-		}
-	}
+	// intervalMap := map[int64]bool{}
+	// for _, interval := range intervals {
+	// 	splitted := strings.Split(interval, "-")
+	// 	for i := atoi(splitted[0]); i <= atoi(splitted[1]); i++ {
+	// 		intervalMap[i] = true
+	// 	}
+	// }
 
-	for _, i := range ingredients {
-		if _, ok := intervalMap[atoi(i)]; ok {
-			freshCount++
-			fmt.Println(i)
+	for i := range ingredients {
+		for _, interval := range intervals {
+			splitted := strings.Split(interval, "-")
+			if betweenInterval(atoi(splitted[0]), atoi(splitted[1]), atoi(i)) {
+				freshCount++
+				break
+			}
 		}
 	}
 
