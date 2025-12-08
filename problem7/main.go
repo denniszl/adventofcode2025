@@ -45,18 +45,26 @@ func drawBeam(x, y int, input [][]string) {
 
 var outputPositions = map[string]bool{}
 var visited = map[string]bool{}
-var uniqueCarat = map[string]bool{}
+var memo = map[string]int{}
 
 func calculateBeam(x, y int, input [][]string) int {
-	if y >= len(input) || x < 0 || x >= len(input[0]) {
+	if x < 0 || x >= len(input[0]) {
 		return 0
+	}
+	posKey := fmt.Sprintf("%d,%d", y, x)
+	if _, ok := memo[posKey]; ok {
+		return memo[posKey]
+	}
+	if y >= len(input) {
+		memo[posKey] = 1
+		return 1
 	}
 
-	posKey := fmt.Sprintf("%d,%d", y, x)
-	if visited[posKey] {
-		return 0
-	}
-	visited[posKey] = true
+	// posKey := fmt.Sprintf("%d,%d", y, x)
+	// if visited[posKey] {
+	// 	return 0
+	// }
+	// visited[posKey] = true
 
 	// search for "S" or "|"
 	if y == 0 {
@@ -82,11 +90,13 @@ func calculateBeam(x, y int, input [][]string) int {
 			outputPositions[rightPos] = true
 		}
 
-		drawBeam(x-1, y, input)
-		drawBeam(x+1, y, input)
-		uniqueCarat[fmt.Sprintf("%d,%d", y, x)] = true
+		// drawBeam(x-1, y, input)
+		// drawBeam(x+1, y, input)
+		// uniqueCarat[fmt.Sprintf("%d,%d", y, x)] = true
 		// fmt.Println("split at x: ", x, "y:", y)
-		return add + calculateBeam(x-1, y, input) + calculateBeam(x+1, y, input)
+		memo[fmt.Sprintf("%d,%d", y, x-1)] = calculateBeam(x-1, y, input)
+		memo[fmt.Sprintf("%d,%d", y, x+1)] = calculateBeam(x+1, y, input)
+		return memo[fmt.Sprintf("%d,%d", y, x-1)] + memo[fmt.Sprintf("%d,%d", y, x+1)]
 	}
 	drawBeam(x, y+1, input)
 	return calculateBeam(x, y+1, input)
@@ -94,7 +104,7 @@ func calculateBeam(x, y int, input [][]string) int {
 
 func main() {
 	input := readInput()
-	calculateBeam(0, 0, input)
-	printDiagram(input)
-	fmt.Println(len(uniqueCarat))
+	numTimes := calculateBeam(0, 0, input)
+	// printDiagram(input)
+	fmt.Println(numTimes)
 }
